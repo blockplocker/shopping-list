@@ -1,5 +1,6 @@
 ﻿using ShoppingList.Application.Interfaces;
 using ShoppingList.Domain.Models;
+using System;
 
 namespace ShoppingList.Application.Services;
 
@@ -10,29 +11,41 @@ public class ShoppingListService : IShoppingListService
 
     public ShoppingListService()
     {
-        // Initialize with demo data for UI demonstration
-        // TODO: Students can remove or comment this out when running unit tests
-        _items = GenerateDemoItems();
-        _nextIndex = 4; // We have 4 demo items initialized
+        _nextIndex = 0;
     }
 
     public IReadOnlyList<ShoppingItem> GetAll()
     {
-        // TODO: Students - Return all items from the array (up to _nextIndex)
-        return [];
+        if(_nextIndex == 0)
+            return [];
+        return _items;  
     }
 
     public ShoppingItem? GetById(string id)
     {
-        // TODO: Students - Find and return the item with the matching id
+        foreach (var item in _items)
+        {
+            if (item.Id == id)
+            {
+                return item;
+            }
+        }
         return null;
     }
 
     public ShoppingItem? Add(string name, int quantity, string? notes)
     {
-        // TODO: Students - Implement this method
-        // Return the created item
-        return null;
+       var item = new ShoppingItem()
+       {
+            Name = name,
+            Quantity = quantity,
+            Notes = notes,            
+        };
+        
+        _nextIndex++;
+        Array.Resize<ShoppingItem>(ref _items, _nextIndex);
+        _items[_nextIndex-1] = item;
+        return item;
     }
 
     public ShoppingItem? Update(string id, string name, int quantity, string? notes)
@@ -44,15 +57,33 @@ public class ShoppingListService : IShoppingListService
 
     public bool Delete(string id)
     {
-        // TODO: Students - Implement this method
-        // Return true if deleted, false if not found
+        for(int index = 0; index < _items.Length; index++)
+        {
+            if (_items[index].Id == id)
+            {
+                for (int j = index+1; j < _items.Length; j++) 
+                {
+                    _items[j-1] = _items[j];
+                }
+                _nextIndex--;
+                Array.Resize<ShoppingItem>(ref _items, _nextIndex);
+
+                return true;
+            }
+        }
         return false;
     }
 
     public IReadOnlyList<ShoppingItem> Search(string query)
     {
-        // TODO: Students - Implement this method
-        // Return the filtered items
+        foreach (var item in _items)
+        {
+            if (item.Name.Contains(query, StringComparison.OrdinalIgnoreCase) ||
+                (item.Notes != null && item.Notes.Contains(query, StringComparison.OrdinalIgnoreCase)))
+            {
+                return [item];
+            }
+        }
         return [];
     }
 
@@ -76,42 +107,6 @@ public class ShoppingListService : IShoppingListService
         // Return true if successful, false otherwise
         return false;
     }
-
-    private ShoppingItem[] GenerateDemoItems()
-    {
-        var items = new ShoppingItem[5];
-        items[0] = new ShoppingItem
-        {
-            Id = Guid.NewGuid().ToString(),
-            Name = "Dishwasher tablets",
-            Quantity = 1,
-            Notes = "80st/pack - Rea",
-            IsPurchased = false
-        };
-        items[1] = new ShoppingItem
-        {
-            Id = Guid.NewGuid().ToString(),
-            Name = "Ground meat",
-            Quantity = 1,
-            Notes = "2kg - origin Sweden",
-            IsPurchased = false
-        };
-        items[2] = new ShoppingItem
-        {
-            Id = Guid.NewGuid().ToString(),
-            Name = "Apples",
-            Quantity = 10,
-            Notes = "Pink Lady",
-            IsPurchased = false
-        };
-        items[3] = new ShoppingItem
-        {
-            Id = Guid.NewGuid().ToString(),
-            Name = "Toothpaste",
-            Quantity = 1,
-            Notes = "Colgate",
-            IsPurchased = false
-        };
-        return items;
-    }
+    public ShoppingItem[] _TEST_items => _items;
+    
 }
