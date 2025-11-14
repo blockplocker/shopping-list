@@ -37,7 +37,7 @@ jobs:
 # Använd conditional expressions (if:) för att anpassa output
 # Formatera outputen på ett tydligt sätt (inte bara rå JSON dump)
       
-  build:
+  build-and-test:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -58,15 +58,18 @@ jobs:
       - name: Build
         run: dotnet build --no-restore
 
-  Run-Tests:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v5
-        
       - name: Test with the dotnet CLI
         run: dotnet test shoppinglist.tests --no-build
+
+  # Run-Tests:
+  #   needs: build-and-test
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v5
+        
+  #     - name: Test with the dotnet CLI
+  #       run: dotnet test shoppinglist.tests --no-build
       
         
         
