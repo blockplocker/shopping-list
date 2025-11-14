@@ -19,8 +19,8 @@ jobs:
           run: echo "This is a reusable step."
           shell: bash
         
-      - name: print context
-        # if: ${{}}
+      - name: print context push
+        if: github.event_name == 'push'
         run: |
           echo "Workflow: ${{github.workflow}}"
           echo "Repo: ${{github.action_repository}}"
@@ -28,6 +28,28 @@ jobs:
           echo "Triggered by: ${{github.triggering_actor}}"
           echo "Branch: ${{github.ref}}"
           echo "Runner: ${{runner.os}}"
+          echo "Commit Message: ${{github.event.head_commit.message}}"
+
+      - name: print context pr
+        if: github.event_name == 'pull_request'
+        run: |
+          echo "Workflow: ${{github.workflow}}"
+          echo "Repo: ${{github.action_repository}}"
+          echo "Trigger event: ${{github.event_name}}"
+          echo "Triggered by: ${{github.triggering_actor}}"
+          echo "Branch: ${{github.ref}}"
+          echo "Runner: ${{runner.os}}"
+        
+      - name: print context workflow dispatch
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          echo "Workflow: ${{github.workflow}}"
+          echo "Repo: ${{github.action_repository}}"
+          echo "Trigger event: ${{github.event_name}}"
+          echo "Triggered by: ${{github.triggering_actor}}"
+          echo "Branch: ${{github.ref}}"
+          echo "Runner: ${{runner.os}}"
+        
           
       - *echo-template
 # Vid PR: visa PR number, author, source/target branch
@@ -59,13 +81,14 @@ jobs:
         run: dotnet build --no-restore
 
       - name: Test with the dotnet CLI
-        run: dotnet test --no-build --no-restore --logger trx --results-directory "TestResults-${{ matrix.dotnet-version }}"
+        run: dotnet test --no-build 
+      # --no-restore --logger trx --results-directory "TestResults-${{ matrix.dotnet-version }}"
         
-      - name: Upload dotnet test results
-        uses: actions/upload-artifact@v4
-        with:
-          name: dotnet-results-${{ matrix.dotnet-version }}
-          path: TestResults-${{ matrix.dotnet-version }}
+      # - name: Upload dotnet test results
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: dotnet-results-${{ matrix.dotnet-version }}
+      #     path: TestResults-${{ matrix.dotnet-version }}
 
         
 
