@@ -59,19 +59,14 @@ jobs:
         run: dotnet build --no-restore
 
       - name: Test with the dotnet CLI
-        run: dotnet test --no-build
+        run: dotnet test --no-build --no-restore --logger trx --results-directory "TestResults-${{ matrix.dotnet-version }}"
+        
+      - name: Upload dotnet test results
+        uses: actions/upload-artifact@v4
+        with:
+          name: dotnet-results-${{ matrix.dotnet-version }}
+          path: TestResults-${{ matrix.dotnet-version }}
 
-  # Run-Tests:
-  #   needs: build-and-test
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Checkout code
-  #       uses: actions/checkout@v5
-        
-  #     - name: Test with the dotnet CLI
-  #       run: dotnet test shoppinglist.tests --no-build
-      
-        
         
 
       
