@@ -76,7 +76,7 @@ jobs:
         run: dotnet build --no-restore
 
       - name: Test with the dotnet CLI
-        run: dotnet test --no-build --logger trx --results-directory "TestResults-${{ matrix.dotnet-version }}"
+        run: dotnet test --no-build --logger trx --results-directory "TestResults-${{ matrix.version }}"
         
       - name: Upload dotnet test results
         uses: actions/upload-artifact@v4
