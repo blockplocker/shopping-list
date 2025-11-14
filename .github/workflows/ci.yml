@@ -1,0 +1,60 @@
+name: Build And test
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+      
+jobs:
+  print-runtime-context:
+    runs-on: ubuntu-latest
+    steps:
+
+      - &echo-template
+          name: Echo template
+          run: echo "This is a reusable step."
+          shell: bash
+        
+      - name: print context
+        if: ${{}}
+        run: |
+          echo "Workflow ${{github.workflow}}"
+          echo "Repo ${{github.action_repository}}"
+          echo "Triggered by event ${{github.event_name}}"
+          echo "Triggered by ${{github.triggering_actor}}"
+          echo "Branch ${{github.ref}}"
+          echo "Runner ${{runner.os}}"
+          
+      - *echo-template
+# Vid PR: visa PR number, author, source/target branch
+# Vid push: visa commit message, author, changed files (om möjligt)
+# Vid manuell: visa vem som startade och med vilka inputs
+
+# Använd conditional expressions (if:) för att anpassa output
+# Formatera outputen på ett tydligt sätt (inte bara rå JSON dump)
+      
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        version: [9.0, 8.0]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5.0.0
+        
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5.0.0
+        with:
+          version: ${{matrix.version}}
+
+      - name: Build Project
+        run: dotnet build
+        
+        
+
+      
