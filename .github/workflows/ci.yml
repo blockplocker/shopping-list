@@ -22,12 +22,12 @@ jobs:
       - name: print context
         # if: ${{}}
         run: |
-          echo "Workflow ${{github.workflow}}"
-          echo "Repo ${{github.action_repository}}"
-          echo "Triggered by event ${{github.event_name}}"
-          echo "Triggered by ${{github.triggering_actor}}"
-          echo "Branch ${{github.ref}}"
-          echo "Runner ${{runner.os}}"
+          echo "Workflow: ${{github.workflow}}"
+          echo "Repo: ${{github.action_repository}}"
+          echo "Trigger event: ${{github.event_name}}"
+          echo "Triggered by: ${{github.triggering_actor}}"
+          echo "Branch: ${{github.ref}}"
+          echo "Runner: ${{runner.os}}"
           
       - *echo-template
 # Vid PR: visa PR number, author, source/target branch
@@ -59,7 +59,7 @@ jobs:
         run: dotnet build --no-restore
 
       - name: Test with the dotnet CLI
-        run: dotnet test shoppinglist.tests --no-build
+        run: dotnet test --no-build
 
   # Run-Tests:
   #   needs: build-and-test
