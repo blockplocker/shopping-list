@@ -39,7 +39,8 @@ jobs:
           echo "Triggered by: ${{github.triggering_actor}}"
           echo "Branch: ${{github.ref}}"
           echo "Runner: ${{runner.os}}"
-        
+          echo "Target Branch: ${{github.base_ref}}"
+          
       - name: print context workflow dispatch
         if: github.event_name == 'workflow_dispatch'
         run: |
@@ -48,16 +49,10 @@ jobs:
           echo "Trigger event: ${{github.event_name}}"
           echo "Triggered by: ${{github.triggering_actor}}"
           echo "Branch: ${{github.ref}}"
-          echo "Runner: ${{runner.os}}"
+          echo "Runner: ${{runner.os}}" 
+          echo "Runner: ${{inputs}}" 
         
-          
       - *echo-template
-# Vid PR: visa PR number, author, source/target branch
-# Vid push: visa commit message, author, changed files (om möjligt)
-# Vid manuell: visa vem som startade och med vilka inputs
-
-# Använd conditional expressions (if:) för att anpassa output
-# Formatera outputen på ett tydligt sätt (inte bara rå JSON dump)
       
   build-and-test:
     runs-on: ${{ matrix.os }}
@@ -81,14 +76,13 @@ jobs:
         run: dotnet build --no-restore
 
       - name: Test with the dotnet CLI
-        run: dotnet test --no-build 
-      # --no-restore --logger trx --results-directory "TestResults-${{ matrix.dotnet-version }}"
+        run: dotnet test --no-build --logger trx --results-directory "TestResults-${{ matrix.dotnet-version }}"
         
-      # - name: Upload dotnet test results
-      #   uses: actions/upload-artifact@v4
-      #   with:
-      #     name: dotnet-results-${{ matrix.dotnet-version }}
-      #     path: TestResults-${{ matrix.dotnet-version }}
+      - name: Upload dotnet test results
+        uses: actions/upload-artifact@v4
+        with:
+          name: dotnet-results-${{ matrix.dotnet-version }}
+          path: TestResults-${{ matrix.dotnet-version }}
 
         
 
