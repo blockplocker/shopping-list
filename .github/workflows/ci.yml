@@ -20,7 +20,7 @@ jobs:
           shell: bash
         
       - name: print context
-        if: ${{}}
+        # if: ${{}}
         run: |
           echo "Workflow ${{github.workflow}}"
           echo "Repo ${{github.action_repository}}"
